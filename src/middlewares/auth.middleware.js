@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const throwError = require("../utils/throwError");
 const { JWT_ACCESS_SECRET } = require("../config/env");
 
-// 🧱 Hàm tách token từ header
+// Hàm tách token từ header
 const extractToken = (req) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
@@ -11,7 +11,7 @@ const extractToken = (req) => {
   return authHeader.split(" ")[1].replace(/"/g, "");
 };
 
-// 🛡 Middleware xác thực token
+// Middleware xác thực token
 const verifyToken = (req, res, next) => {
   const token = extractToken(req);
 

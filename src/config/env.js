@@ -14,5 +14,8 @@ module.exports = {
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
 
+  // Frontend URL
+  FRONT_END_ORIGIN: process.env.FRONT_END_ORIGIN
+
   // Cloudinary / AWS / Momo (nếu có)
 };

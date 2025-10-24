@@ -44,6 +44,7 @@ const userSchema = new mongoose.Schema(
       enum: ["online", "offline", "busy"],
       default: "online",
     },
+    isTeacher: { type: Boolean, default: false }, // Xác thực là giáo viên.
   },
   { timestamps: true }
 );

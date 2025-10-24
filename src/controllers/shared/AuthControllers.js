@@ -26,7 +26,7 @@ const loginController = async (req, res, next) => {
     const { refreshToken, ...newResult } = result;
 
     if (platform === "web") {
-      res.cookie("refresh_token", refreshToken, {
+      res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: false, // Đổi thành true khi deploy với HTTPS
         sameSite: "strict",
@@ -34,7 +34,7 @@ const loginController = async (req, res, next) => {
         path: "/",
       });
 
-      return res.status(200).json(newResult); // Gửi access_token và user
+      return res.status(200).json(newResult); // Gửi accessToken và user
     } else {
       return res.status(200).json({
         ...newResult,
@@ -48,7 +48,7 @@ const loginController = async (req, res, next) => {
 
 const handleRefreshToken = async (req, res, next) => {
   try {
-    const token = req.cookies.refresh_token;
+    const token = req.cookies.refreshToken;
 
     if (!token) throwError("Người dùng chưa đăng nhập!", 401);
 
@@ -61,7 +61,7 @@ const handleRefreshToken = async (req, res, next) => {
 
 const logoutController = async (req, res, next) => {
   try {
-    res.clearCookie("refresh_token", {
+    res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: false,
       sameSite: "strict",

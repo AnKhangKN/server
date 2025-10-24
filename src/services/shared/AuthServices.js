@@ -13,7 +13,7 @@ class AuthServices {
 
     const hashedPassword = hashSync(password, 10);
 
-    // 🌟 1️⃣ Tạo base username (họ + tên, viết thường, không dấu)
+    // Tạo base username (họ + tên, viết thường, không dấu)
     let baseUsername = `${firstName}${lastName}`
       .toLowerCase()
       .replace(/\s+/g, "");
@@ -21,7 +21,7 @@ class AuthServices {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-    // 🌟 2️⃣ Hàm tạo chuỗi ngẫu nhiên (gồm chữ, số, _, .)
+    // Hàm tạo chuỗi ngẫu nhiên (gồm chữ, số, _, .)
     const randomSuffix = (length = 3) => {
       const chars = "abcdefghijklmnopqrstuvwxyz0123456789_.";
       let result = "";
@@ -31,7 +31,7 @@ class AuthServices {
       return result;
     };
 
-    // 🌟 3️⃣ Sinh username với vị trí thêm hợp lý (trước / giữa / sau)
+    // Sinh username với vị trí thêm hợp lý (trước / giữa / sau)
     let finalUsername = baseUsername;
     let attempt = 0;
 
@@ -67,7 +67,7 @@ class AuthServices {
       }
     }
 
-    // 🌟 4️⃣ Tạo user
+    // Tạo user
     const newUser = await User.create({
       firstName,
       lastName,
