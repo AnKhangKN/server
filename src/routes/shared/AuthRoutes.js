@@ -4,6 +4,7 @@ const AuthControllers = require("../../controllers/shared/AuthControllers");
 const {
   handleRefreshToken,
 } = require("../../controllers/shared/AuthControllers");
+const { verifyToken } = require("../../middlewares/auth.middleware");
 const route = express.Router();
 
 route.post(
@@ -19,5 +20,7 @@ route.post(
 );
 
 route.post("/token/refresh", handleRefreshToken);
+
+route.delete("/logout", verifyToken, AuthControllers.logoutController);
 
 module.exports = route;

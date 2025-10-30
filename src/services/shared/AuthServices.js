@@ -78,7 +78,6 @@ class AuthServices {
 
     return {
       message: "Tạo tài khoản thành công!",
-      userName: finalUsername,
     };
   }
 
