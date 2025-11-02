@@ -7,13 +7,21 @@ const route = express.Router();
 
 route.get("/users", verifyToken, isUser, UserControllers.getFriendsSuggest);
 
-route.post("/users/follow", verifyToken, isUser, UserControllers.followFriend);
+route.post("/follow", verifyToken, isUser, UserControllers.followFriend);
 
-route.post(
-  "/users/hidden",
+route.post("/hidden", verifyToken, isUser, UserControllers.hiddenOrBlockFriend);
+
+route.get(
+  "/profiles/:userName",
   verifyToken,
   isUser,
-  UserControllers.hiddenOrBlockFriend
+  UserControllers.getProfile
 );
+
+route.get("/friends", verifyToken, isUser, UserControllers.getFriends);
+
+route.get("/following", verifyToken, isUser, UserControllers.getFollowing);
+
+route.get("/follower", verifyToken, isUser, UserControllers.getFollower);
 
 module.exports = route;

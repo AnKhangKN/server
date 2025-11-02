@@ -6,8 +6,8 @@ const UserRoutesUser = require("./user/UserRoutes");
 
 const routes = (app) => {
   // shared
-  app.use("/api/auth", AuthRoutes);
-  app.use("/api/user", UserRoutes);
+  app.use("/api/shared", AuthRoutes);
+  app.use("/api/shared", UserRoutes);
 
   // user
   app.use("/api/user", PostRoutesUser);

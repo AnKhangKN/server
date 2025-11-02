@@ -23,4 +23,6 @@ route.post(
 
 route.get("/posts", verifyToken, isUser, PostControllers.getPosts);
 
+route.post("/posts/hearts", verifyToken, isUser, PostControllers.heartPost);
+
 module.exports = route;

@@ -53,8 +53,60 @@ const hiddenOrBlockFriend = async (req, res, next) => {
   }
 };
 
+const getProfile = async (req, res, next) => {
+  try {
+    const { userName } = req.params;
+
+    const result = await UserServices.getProfile(userName);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getFriends = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await UserServices.getFriends(userId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getFollowing = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await UserServices.getFollowing(userId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getFollower = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await UserServices.getFollower(userId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getFriendsSuggest,
   followFriend,
   hiddenOrBlockFriend,
+  getProfile,
+  getFriends,
+  getFollowing,
+  getFollower,
 };

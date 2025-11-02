@@ -18,7 +18,12 @@ const userSchema = new mongoose.Schema(
       default: "", // ảnh mặc định
     },
     bio: { type: String, maxlength: 200, default: "" },
-    orderConnect: [{ type: String }], // Các link mạng xã hội khác
+    orderConnect: [
+      {
+        linkName: { type: String },
+        linkConnect: { type: String },
+      },
+    ], // Các link mạng xã hội khác
     gender: {
       type: String,
       enum: ["male", "female", "other"],
@@ -54,7 +59,7 @@ const userSchema = new mongoose.Schema(
     privacyPost: {
       //Thiết lập mặt định khi đăng bài post lưu cho các lần kế tiếp (friend dành cho cả 2 người theo dỗi nhau.)
       type: String,
-      enum: ["public", "friend", "private"],
+      enum: ["public", "friends", "private"],
       default: "public",
     },
 

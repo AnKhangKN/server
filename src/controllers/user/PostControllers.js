@@ -42,7 +42,22 @@ const getPosts = async (req, res, next) => {
   }
 };
 
+const heartPost = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const { postId, targetType } = req.body;
+
+    const result = await PostServices.heartPost(userId, postId, targetType);
+
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createNewPost,
   getPosts,
+  heartPost,
 };

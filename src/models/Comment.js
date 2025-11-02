@@ -21,12 +21,17 @@ const commentSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    hearts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Heart" }],
+
+    heartsCount: { type: Number, default: 0 },
 
     parentComment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",
       default: null, // nếu là reply
     },
+
+    parentCommentCount: { type: Number, default: 0 },
 
     isEdited: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },

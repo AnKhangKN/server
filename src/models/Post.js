@@ -36,12 +36,11 @@ const postSchema = new mongoose.Schema(
       enum: ["public", "friends", "private"],
       default: "public",
     },
-
     hearts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Heart" }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
     shares: [{ type: mongoose.Schema.Types.ObjectId, ref: "Share" }],
 
-    likesCount: { type: Number, default: 0 },
+    heartsCount: { type: Number, default: 0 },
     commentsCount: { type: Number, default: 0 },
     sharesCount: { type: Number, default: 0 },
 

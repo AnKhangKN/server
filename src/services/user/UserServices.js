@@ -1,4 +1,5 @@
 const User = require("../../models/User");
+const Post = require("../../models/Post");
 const throwError = require("../../utils/throwError");
 
 class UserServices {
@@ -14,8 +15,7 @@ class UserServices {
     // 3️⃣ Lấy danh sách user chưa bị ẩn/chặn, trừ chính mình
     const users = await User.find({
       _id: { $nin: [...hiddenIds, userId] },
-    })
-    .lean();
+    }).lean();
 
     // 4️⃣ Lọc những user chưa được following
     const notFollowingUsers = users.filter(
@@ -100,6 +100,73 @@ class UserServices {
       }!`,
       data: user.friendsHidden,
     };
+  }
+
+  async getProfile(userName) {
+    // 1. Tìm user
+    const user = await User.findOne({ userName: userName }).select("-password"); // loại bỏ password nếu có
+    if (!user) {
+      throwError("Không tìm thấy người dùng!", 400);
+    }
+
+    // 2. Lấy tất cả bài viết của user
+    const posts = await Post.find({ author: user._id })
+      .populate({
+        path: "author",
+        select: "firstName lastName userAvatar",
+      })
+      .populate({
+        path: "group",
+        select: "groupName groupAvatar",
+      })
+      .populate({
+        path: "hearts",
+        select: "author",
+      })
+      .sort({ createdAt: -1 }) // Mới nhất
+      .lean();
+
+    // 3. Trả về kết quả
+    return {
+      message: "Lấy thông tin user và bài viết thành công",
+      data: {
+        user,
+        posts,
+      },
+    };
+  }
+
+  async getFriends(userId) {
+    const user = await User.findById(userId).select("following");
+    if (!user) return [];
+
+    const following = user.following;
+
+    const friends = await User.find({
+      _id: { $in: following },
+      following: userId, // những người có follow lại userId
+    }).select("username _id");
+
+    return friends;
+  }
+
+  async getFollowing(userId) {
+    const user = await User.findById(userId)
+      .select("following")
+      .populate("following", "username _id"); // lấy thông tin người follow
+
+    if (!user) return [];
+
+    return user.following; // trả về danh sách người đang được follow
+  }
+
+  async getFollower(userId) {
+    // tìm tất cả user mà có userId nằm trong danh sách following của họ
+    const followers = await User.find({
+      following: userId,
+    }).select("username _id");
+
+    return followers;
   }
 }
 
