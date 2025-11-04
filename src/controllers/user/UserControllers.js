@@ -65,11 +65,11 @@ const getProfile = async (req, res, next) => {
   }
 };
 
-const getFriends = async (req, res, next) => {
+const getFollower = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const { userName } = req.params;
 
-    const result = await UserServices.getFriends(userId);
+    const result = await UserServices.getFollower(userName);
 
     res.status(200).json(result);
   } catch (error) {
@@ -79,21 +79,9 @@ const getFriends = async (req, res, next) => {
 
 const getFollowing = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const { userName } = req.params;
 
-    const result = await UserServices.getFollowing(userId);
-
-    res.status(200).json(result);
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getFollower = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-
-    const result = await UserServices.getFollower(userId);
+    const result = await UserServices.getFollowing(userName);
 
     res.status(200).json(result);
   } catch (error) {
@@ -106,7 +94,6 @@ module.exports = {
   followFriend,
   hiddenOrBlockFriend,
   getProfile,
-  getFriends,
   getFollowing,
   getFollower,
 };

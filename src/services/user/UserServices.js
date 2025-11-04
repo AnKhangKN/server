@@ -136,37 +136,24 @@ class UserServices {
     };
   }
 
-  async getFriends(userId) {
-    const user = await User.findById(userId).select("following");
-    if (!user) return [];
+  async getFollower(userName) {
+    const user = await User.findOne({ userName })
+      .select("_id userName")
+      .populate("followers", "userAvatar userName lastName firstName");
 
-    const following = user.following;
-
-    const friends = await User.find({
-      _id: { $in: following },
-      following: userId, // những người có follow lại userId
-    }).select("username _id");
-
-    return friends;
+    return {
+      data: user,
+    };
   }
 
-  async getFollowing(userId) {
-    const user = await User.findById(userId)
-      .select("following")
-      .populate("following", "username _id"); // lấy thông tin người follow
+  async getFollowing(userName) {
+    const user = await User.findOne({ userName })
+      .select("_id userName")
+      .populate("following", "userAvatar userName lastName firstName");
 
-    if (!user) return [];
-
-    return user.following; // trả về danh sách người đang được follow
-  }
-
-  async getFollower(userId) {
-    // tìm tất cả user mà có userId nằm trong danh sách following của họ
-    const followers = await User.find({
-      following: userId,
-    }).select("username _id");
-
-    return followers;
+    return {
+      data: user,
+    };
   }
 }
 

@@ -18,10 +18,18 @@ route.get(
   UserControllers.getProfile
 );
 
-route.get("/friends", verifyToken, isUser, UserControllers.getFriends);
+route.get(
+  "/follower/:userName",
+  verifyToken,
+  isUser,
+  UserControllers.getFollower
+);
 
-route.get("/following", verifyToken, isUser, UserControllers.getFollowing);
-
-route.get("/follower", verifyToken, isUser, UserControllers.getFollower);
+route.get(
+  "/following/:userName",
+  verifyToken,
+  isUser,
+  UserControllers.getFollowing
+);
 
 module.exports = route;
