@@ -13,6 +13,7 @@ const chatPasswordSchema = new mongoose.Schema(
       ref: "Chat",
       required: true,
     },
+    // 6 số mặc định
     passwordHash: {
       type: String,
       required: true,

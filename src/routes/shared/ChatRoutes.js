@@ -25,6 +25,6 @@ route.post(
 
 route.get("/messages/:chatId", verifyToken, ChatControllers.getMessageHistory);
 
-route.get("/chats", verifyToken, ChatControllers.getChatList);
+route.get("/chats", verifyToken, ChatControllers.getAllChatList);
 
 module.exports = route;

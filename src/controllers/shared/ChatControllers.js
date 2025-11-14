@@ -14,13 +14,11 @@ const createChat = async (req, res, next) => {
 
 const createGroupChat = async (req, res, next) => {
   try {
-    const { groupName, groupAvatar, members } = req.body;
+    const userId = req.user.id;
 
-    const result = await ChatServices.createGroupChat(
-      groupAvatar,
-      groupName,
-      members
-    );
+    const { members } = req.body;
+
+    const result = await ChatServices.createGroupChat(userId, members);
 
     res.status(201).json(result);
   } catch (error) {
@@ -64,13 +62,11 @@ const getMessageHistory = async (req, res, next) => {
   }
 };
 
-const getChatList = async (req, res, next) => {
+const getAllChatList = async (req, res, next) => {
   try {
-    const userId = req?.user?.id;
+    const userId = req.user?.id;
 
-    console.log(userId);
-
-    const result = await ChatServices.getChatList(userId);
+    const result = await ChatServices.getAllChatList(userId);
 
     res.status(200).json(result);
   } catch (error) {
@@ -83,5 +79,5 @@ module.exports = {
   createGroupChat,
   sendMessage,
   getMessageHistory,
-  getChatList,
+  getAllChatList,
 };

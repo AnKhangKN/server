@@ -11,6 +11,14 @@ const chatSchema = new mongoose.Schema(
       type: String,
     },
 
+    // Nếu tạo nhóm.
+    groupAdmin: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,

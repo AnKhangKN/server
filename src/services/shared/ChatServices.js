@@ -23,15 +23,22 @@ class ChatServices {
     return newChat;
   }
 
-  async createGroupChat(groupName, groupAvatar, members) {
+  async createGroupChat(userId, members) {
+    // Loại bỏ trùng lặp trong danh sách members
+    const uniqueMembers = [...new Set(members)];
+
+    // Nếu người tạo nhóm chưa có trong members thì thêm vào
+    if (!uniqueMembers.includes(userId)) {
+      uniqueMembers.push(userId);
+    }
+
     const groupChat = await Chat.create({
-      groupName,
-      groupAvatar,
-      members,
+      groupAdmin: [userId], // Người tạo nhóm là admin chính
+      members: uniqueMembers, // Danh sách thành viên bao gồm người tạo nhóm
     });
 
     return {
-      message: `Tạo nhóm ${groupName} thành công!`,
+      message: `Tạo nhóm thành công!`,
       data: groupChat,
     };
   }
@@ -74,14 +81,29 @@ class ChatServices {
     };
   }
 
-  async getChatList(userId) {
+  async getAllChatList(userId) {
+    // Lấy tất cả chat mà user tham gia
     const chats = await Chat.find({ members: userId })
+      .populate("groupAdmin", "_id userName userAvatar lastName firstName")
       .populate("members", "_id userName userAvatar lastName firstName")
       .sort({ "lastMessage.createdAt": -1, updatedAt: -1 });
 
+    // Tách ra 1:1 chat và group chat >2 thành viên nếu cần
+    const oneToOneChats = chats.filter((c) => c.members.length === 2);
+    const groupChats = chats.filter((c) => c.members.length > 2);
+
+    // Nếu muốn FE chỉ cần 1 mảng chung sắp xếp theo lastMessage.createdAt
+    const allChats = [...oneToOneChats, ...groupChats].sort((a, b) => {
+      const aTime =
+        a.lastMessage?.createdAt?.getTime() || a.updatedAt.getTime();
+      const bTime =
+        b.lastMessage?.createdAt?.getTime() || b.updatedAt.getTime();
+      return bTime - aTime; // giảm dần
+    });
+
     return {
-      message: "Lấy danh sách chat!",
-      data: chats || [],
+      message: "Lấy tất cả chat thành công!",
+      data: allChats,
     };
   }
 }
