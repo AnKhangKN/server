@@ -14,8 +14,8 @@ route.post(
   verifyToken,
   isUser,
   upload.fields([
-    { name: "mediaFiles", maxCount: 10 }, // tối đa 10 ảnh và video
-    { name: "documentFiles", maxCount: 10 }, // tối đa 10 document
+    { name: "mediaPosts", maxCount: 10 }, // tối đa 10 ảnh và video
+    { name: "documentPosts", maxCount: 10 }, // tối đa 10 document
   ]),
   uploadFiles,
   PostControllers.createNewPost

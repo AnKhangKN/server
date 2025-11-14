@@ -8,7 +8,7 @@ const isAdmin = (req, res, next) => {
 
 // 🧍‍♂️ Kiểm tra quyền User (người dùng thông thường)
 const isUser = (req, res, next) => {
-  if (!req.user.isAdmin) return next();
+  if (!req.user?.isAdmin) return next();
   return next(throwError("Không phải người dùng!", 403));
 };
 

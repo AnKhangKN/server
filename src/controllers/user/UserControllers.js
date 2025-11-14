@@ -89,6 +89,18 @@ const getFollowing = async (req, res, next) => {
   }
 };
 
+const getFriends = async (req, res, next) => {
+  try {
+    const userId = await req.user.id;
+
+    const result = await UserServices.getFriends(userId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getFriendsSuggest,
   followFriend,
@@ -96,4 +108,5 @@ module.exports = {
   getProfile,
   getFollowing,
   getFollower,
+  getFriends,
 };

@@ -5,8 +5,11 @@ const createNewPost = async (req, res, next) => {
   try {
     const { group, content, bgContent, hashtag, userTag, emotion, privacy } =
       req.body;
-    const medias = req.cloudinary?.medias || [];
-    const documents = req.cloudinary?.documents || [];
+
+    const medias = req.cloudinary?.postMedias || [];
+    const documents = req.cloudinary?.postDocuments || [];
+
+    console.log(medias);
 
     const post = await PostServices.createNewPost({
       group,

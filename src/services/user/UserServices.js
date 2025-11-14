@@ -155,6 +155,29 @@ class UserServices {
       data: user,
     };
   }
+
+  async getFriends(userId) {
+    const user = await User.findById(userId)
+      .populate("followers", "_id") // lấy danh sách followers
+      .populate("following", "_id"); // lấy danh sách following
+
+    if (!user) throwError("Người dùng không tồn tại!", 401);
+
+    // Lấy danh sách id
+    const followersIds = user.followers.map((u) => u._id.toString());
+    const followingIds = user.following.map((u) => u._id.toString());
+
+    // Lọc ra mutual friends (người vừa follow, vừa được follow)
+    const mutualIds = followingIds.filter((id) => followersIds.includes(id));
+
+    // Lấy thông tin người dùng theo danh sách mutualIds
+    const friends = await User.find(
+      { _id: { $in: mutualIds } },
+      "_id userName lastName firstName userAvatar"
+    );
+
+    return friends;
+  }
 }
 
 module.exports = new UserServices();

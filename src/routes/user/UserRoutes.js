@@ -32,4 +32,6 @@ route.get(
   UserControllers.getFollowing
 );
 
+route.get("/friends", verifyToken, isUser, UserControllers.getFriends);
+
 module.exports = route;

@@ -1,10 +1,9 @@
 const User = require("../models/User");
 
-// onlineUsers: Map<userId, Set<socketId>>
 let onlineUsers = new Map();
 
 module.exports = (io, socket) => {
-  // 🔹 Lấy mutual friends online của 1 user
+  // Lấy mutual friends online của 1 user
   const getOnlineMutualFriends = async (userId) => {
     try {
       const user = await User.findById(userId)
@@ -34,7 +33,7 @@ module.exports = (io, socket) => {
     }
   };
 
-  // 🔹 User kết nối
+  // User kết nối
   socket.on("setup", async (userId) => {
     // Thêm socket vào onlineUsers
     if (onlineUsers.has(userId)) {

@@ -1,19 +1,89 @@
 const Chat = require("../../models/Chat");
+const Message = require("../../models/Message");
+const bcrypt = require("bcryptjs");
 
 class ChatServices {
-  // Danh sách các đoạn chat
-  async getChats(userId) {
-    return await Chat.find({ members: userId }).populate("lastMessage");
+  async createChat(userId, senderId) {
+    // Tìm xem chat giữa 2 người này đã tồn tại chưa
+    let existingChat = await Chat.findOne({
+      members: { $all: [userId, senderId] }, // chứa cả 2 id
+      "members.2": { $exists: false }, // chỉ có đúng 2 thành viên
+    }).populate();
+
+    if (existingChat) {
+      // Nếu đã có, trả về luôn
+      return existingChat;
+    }
+
+    // Nếu chưa có, tạo mới
+    const newChat = await Chat.create({
+      members: [userId, senderId],
+    });
+
+    return newChat;
   }
 
-  // Tao group chat
-  async createGroup() {}
+  async createGroupChat(groupName, groupAvatar, members) {
+    const groupChat = await Chat.create({
+      groupName,
+      groupAvatar,
+      members,
+    });
 
-  // Gửi tin nhắn
-  async sendMessage() {}
+    return {
+      message: `Tạo nhóm ${groupName} thành công!`,
+      data: groupChat,
+    };
+  }
 
-  // Hiển thị lịch sử tin nhắn
-  async getMessageHistory() {}
+  async sendMessage(chatId, senderId, text, medias, documents) {
+    const chat = await Chat.findById(chatId);
+    if (!chat) throwError("Chat không tồn tại");
+
+    const message = await Message.create({
+      chatId,
+      senderId,
+      text,
+      medias,
+      documents,
+    });
+
+    // Cập nhật lastMessage trong Chat
+    chat.lastMessage = {
+      text,
+      senderId,
+      createdAt: new Date(),
+    };
+    await chat.save();
+
+    return { chat, message };
+  }
+
+  async getMessageHistory(chatId) {
+    if (!chatId) {
+      throwError("chatId không hợp lệ", 400);
+    }
+
+    const messages = await Message.find({ chatId })
+      .populate("senderId", "userName userAvatar lastName firstName")
+      .sort({ createdAt: 1 });
+
+    return {
+      message: "Lấy lịch sử chat thành công!",
+      data: messages,
+    };
+  }
+
+  async getChatList(userId) {
+    const chats = await Chat.find({ members: userId })
+      .populate("members", "_id userName userAvatar lastName firstName")
+      .sort({ "lastMessage.createdAt": -1, updatedAt: -1 });
+
+    return {
+      message: "Lấy danh sách chat!",
+      data: chats || [],
+    };
+  }
 }
 
 module.exports = new ChatServices();

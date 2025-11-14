@@ -1,18 +1,13 @@
 module.exports = (io, socket) => {
-  socket.on("joinChat", (roomId) => {
-    socket.join(roomId);
-
-    console.log(`User joined chat room: ${roomId}`);
+  // Khi user join chat room
+  socket.on("joinChat", (chatId) => {
+    socket.join(chatId);
+    console.log(`User joined chat room: ${chatId}`);
   });
 
-  socket.on("sendMessage", (messageData) => {
-    const { roomId, senderId, content } = messageData;
-
-    // Gửi tin nhắn cho roomId.
-    io.to(roomId).emit("receiveMessage", {
-      senderId,
-      content,
-      time: new Date(),
-    });
+  // Khi user gửi tin nhắn
+  socket.on("sendMessage", (msg) => {
+    // Gửi lại tin nhắn tới tất cả user trong room
+    io.to(msg.chatId).emit("receiveMessage", msg);
   });
 };

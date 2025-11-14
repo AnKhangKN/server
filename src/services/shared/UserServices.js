@@ -12,6 +12,8 @@ class UserServices {
       user,
     };
   }
+
+  
 }
 
 module.exports = new UserServices();
