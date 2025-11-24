@@ -9,8 +9,6 @@ const createNewPost = async (req, res, next) => {
     const medias = req.cloudinary?.postMedias || [];
     const documents = req.cloudinary?.postDocuments || [];
 
-    console.log(medias);
-
     const post = await PostServices.createNewPost({
       group,
       author: req.user._id || req.user.id,
@@ -45,15 +43,17 @@ const getPosts = async (req, res, next) => {
   }
 };
 
-const heartPost = async (req, res, next) => {
+const getPostById = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const { postId } = req.params;
 
-    const { postId, targetType } = req.body;
+    if (!postId) {
+      throwError("Post ID không được để trống!", 400);
+    }
 
-    const result = await PostServices.heartPost(userId, postId, targetType);
+    const post = await PostServices.getPostById(postId);
 
-    res.status(201).json(result);
+    res.status(200).json(post);
   } catch (error) {
     next(error);
   }
@@ -62,5 +62,5 @@ const heartPost = async (req, res, next) => {
 module.exports = {
   createNewPost,
   getPosts,
-  heartPost,
+  getPostById,
 };

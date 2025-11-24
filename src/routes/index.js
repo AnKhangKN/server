@@ -4,6 +4,8 @@ const UserRoutesAdmin = require("./admin/UserRoutes");
 const PostRoutesUser = require("./user/PostRoutes");
 const UserRoutesUser = require("./user/UserRoutes");
 const ChatRoutes = require("./shared/ChatRoutes");
+const CommentRoutesUser = require("./user/CommentRoutes");
+const HeartRoutesUser = require("./user/HeartRoutes");
 
 const routes = (app) => {
   // shared
@@ -14,6 +16,8 @@ const routes = (app) => {
   // user
   app.use("/api/user", PostRoutesUser);
   app.use("/api/user", UserRoutesUser);
+  app.use("/api/user", CommentRoutesUser);
+  app.use("/api/user", HeartRoutesUser);
 
   // admin
   app.use("/api/admin", UserRoutesAdmin);

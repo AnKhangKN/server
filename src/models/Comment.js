@@ -1,41 +1,55 @@
 const mongoose = require("mongoose");
 
+// Schema chung cho media hoặc document
+const mediaSchema = new mongoose.Schema({
+  url: { type: String, required: true },
+  type: { type: String, enum: ["image", "video", "file"], required: true },
+  name: { type: String, required: true },
+});
+
 const commentSchema = new mongoose.Schema(
   {
-    // Bài post gì
+    // Thuộc bài post
     post: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
       required: true,
     },
 
-    // Ai là người tim
+    // Người tạo comment
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
+    // Nội dung chữ
     content: {
       type: String,
-      required: true,
       trim: true,
+      default: "",
     },
-    hearts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Heart" }],
 
+    medias: [mediaSchema], // ảnh/video
+    documents: [mediaSchema], // file tài liệu
+
+    // Danh sách user tim
+    hearts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Heart" }],
     heartsCount: { type: Number, default: 0 },
 
+    // Comment cha
     parentComment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",
-      default: null, // nếu là reply
+      default: null,
     },
 
-    parentCommentCount: { type: Number, default: 0 },
+    // Đếm số reply con
+    repliesCount: { type: Number, default: 0 },
 
+    // Status
     isEdited: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
-    repliesCount: { type: Number, default: 0 }, // đếm số reply con
   },
   { timestamps: true }
 );

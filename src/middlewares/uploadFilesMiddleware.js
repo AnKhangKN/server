@@ -85,6 +85,17 @@ const uploadFiles = async (req, res, next) => {
       "messages/documents"
     );
 
+    // --- Upload cho Comment ---
+    req.cloudinary.commentMedias = await uploadMultipleFiles(
+      "mediaComments",
+      "comments/medias"
+    );
+
+    req.cloudinary.commentDocuments = await uploadMultipleFiles(
+      "documentComments",
+      "comments/documents"
+    );
+
     next();
   } catch (err) {
     console.error("Upload file thất bại:", err);

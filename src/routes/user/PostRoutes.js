@@ -23,6 +23,6 @@ route.post(
 
 route.get("/posts", verifyToken, isUser, PostControllers.getPosts);
 
-route.post("/posts/hearts", verifyToken, isUser, PostControllers.heartPost);
+route.get("/posts/:postId", verifyToken, isUser, PostControllers.getPostById);
 
 module.exports = route;

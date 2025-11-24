@@ -61,56 +61,22 @@ class PostServices {
     };
   }
 
-  async heartPost(userId, postId, targetType) {
-    // Kiểm tra xem người dùng đã thả tim bài viết chưa
-    const existedHeart = await Heart.findOne({
-      author: userId,
-      targetId: postId,
-    });
-
-    if (existedHeart) {
-      // 🩶 Đã thả tim → bỏ tim
-      await Heart.deleteOne({ _id: existedHeart._id });
-
-      // Xóa heartId ra khỏi Post.hearts
-      const post = await Post.findByIdAndUpdate(
-        postId,
-        {
-          $inc: { heartsCount: -1 },
-          $pull: { hearts: existedHeart._id },
-        },
-        { new: true }
-      );
-
-      return {
-        message: `Người dùng ${userId} đã bỏ tim bài viết ${postId}`,
-        heartsCount: post.heartsCount,
-        isHearted: false,
-      };
-    } else {
-      //  Chưa thả tim → thêm tim
-      const heart = await Heart.create({
-        author: userId,
-        targetId: postId,
-        targetType,
+  async getPostById(postId) {
+    const post = await Post.findById(postId)
+      .populate({
+        path: "author",
+        select: "firstName lastName userAvatar",
+      })
+      .populate({
+        path: "group",
+        select: "groupName groupAvatar",
+      })
+      .populate({
+        path: "hearts",
+        select: "author",
       });
 
-      // Thêm heartId vào Post.hearts
-      const post = await Post.findByIdAndUpdate(
-        postId,
-        {
-          $inc: { heartsCount: 1 },
-          $push: { hearts: heart._id },
-        },
-        { new: true }
-      );
-
-      return {
-        message: `Người dùng ${userId} đã tim bài viết ${postId}`,
-        heartsCount: post.heartsCount,
-        isHearted: true,
-      };
-    }
+    return post;
   }
 }
 
