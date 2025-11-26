@@ -9,11 +9,19 @@ const mediaSchema = new mongoose.Schema({
 
 const postSchema = new mongoose.Schema(
   {
+    // Nếu là đăng bài trong group
     group: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Group",
       required: false,
     },
+    // Nếu là đăng bài trong khoa
+    department: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
+      required: false,
+    },
+
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -46,7 +54,7 @@ const postSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["active", "hidden", "deleted", "pending"],
+      enum: ["active", "deleted"],
       default: "active",
     },
   },

@@ -7,7 +7,20 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true, minlength: 6 }, // Ít nhất là 6 ký tự
 
-    studentId: { type: String, unique: false, sparse: true },
+    // Login thất bại nếu 5 lần sẽ bị khóa 30p sao đó mới nhập lại được.
+    lockUntil: {
+      // Thời điểm bị khóa.
+      type: Number,
+      default: 0,
+    },
+    loginAttempts: {
+      // Số lần đã nhập sai.
+      type: Number,
+      required: true,
+      default: 0,
+    },
+
+    studentId: { type: String, unique: true },
     courses: { type: Number, min: 1 }, // Ví dụ: khóa 47, 48,...
     userAvatar: {
       type: String,
@@ -18,17 +31,26 @@ const userSchema = new mongoose.Schema(
       default: "", // ảnh mặc định
     },
     bio: { type: String, maxlength: 200, default: "" },
+
     orderConnect: [
       {
         linkName: { type: String },
-        linkConnect: { type: String },
+        linkConnect: {
+          type: String,
+          validate: {
+            validator: (v) => !v || /^https?:\/\/.+/.test(v),
+            message: "Link không hợp lệ! Phải bắt đầu bằng http hoặc https",
+          },
+        },
       },
-    ], // Các link mạng xã hội khác
+    ],
+
     gender: {
       type: String,
       enum: ["male", "female", "other"],
       default: "other",
     },
+
     major: { type: String },
 
     // Tạo tự động
@@ -37,7 +59,6 @@ const userSchema = new mongoose.Schema(
     // Kết nối mạng xã hội trong hệ thống
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    favorite: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
     // Chứa danh sách người dùng chặn, ẩn đi trong đề xuất
     friendsHidden: [
@@ -54,6 +75,7 @@ const userSchema = new mongoose.Schema(
 
     // Trạng thái & quyền
     isAdmin: { type: Boolean, default: false },
+    isTeacher: { type: Boolean, default: false }, // Xác thực là giáo viên.
     isVerified: { type: Boolean, default: false },
 
     privacyPost: {
@@ -65,10 +87,20 @@ const userSchema = new mongoose.Schema(
 
     status: {
       type: String, // trạng thái tài khoảng
-      enum: ["online", "offline", "busy", "invisible"],
+      enum: ["online", "offline"],
       default: "online",
     },
-    isTeacher: { type: Boolean, default: false }, // Xác thực là giáo viên.
+
+    // Nếu bị admin khóa sẽ là locked và locked time (thời gian sẽ được mở khóa).
+    statusAccount: {
+      type: String,
+      enum: ["active", "inactive", "locked"],
+      default: "active",
+    },
+
+    lockedTime: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
