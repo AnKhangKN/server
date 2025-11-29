@@ -17,7 +17,6 @@ const chatPasswordSchema = new mongoose.Schema(
     passwordHash: {
       type: String,
       required: true,
-      select: false, // Không trả về mặc định
     },
   },
   { timestamps: true }

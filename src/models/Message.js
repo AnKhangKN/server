@@ -23,6 +23,11 @@ const messageSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+
+    hearts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Heart" }],
+
+    heartsCount: { type: Number, default: 0 },
+
     medias: [mediaSchema], // ảnh/video
 
     documents: [mediaSchema], // file tài liệu

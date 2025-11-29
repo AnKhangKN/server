@@ -1,7 +1,7 @@
 const express = require("express");
 const { verifyToken } = require("../../middlewares/auth.middleware");
 const { isUser } = require("../../middlewares/role.middleware");
-const GroupControllers = require("../../controllers/user/GroupControllers");
+const GroupControllers = require("@controllers/user/GroupControllers");
 const route = express.Router();
 const {
   uploadFiles,

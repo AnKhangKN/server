@@ -1,4 +1,4 @@
-const User = require("../../models/User");
+const User = require("@models/User");
 const { compareSync, hashSync } = require("bcryptjs");
 const {
   generateAccessToken,
@@ -68,7 +68,7 @@ class AuthServices {
     }
 
     // Tạo user
-    const newUser = await User.create({
+    await User.create({
       firstName,
       lastName,
       email,

@@ -1,4 +1,4 @@
-const PostServices = require("../../services/user/PostServices");
+const PostServices = require("@services/user/PostServices");
 const throwError = require("../../utils/throwError");
 
 const createNewPost = async (req, res, next) => {

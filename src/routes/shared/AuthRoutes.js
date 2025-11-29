@@ -1,9 +1,7 @@
 const express = require("express");
 const authValidator = require("../../validators/authValidator");
-const AuthControllers = require("../../controllers/shared/AuthControllers");
-const {
-  handleRefreshToken,
-} = require("../../controllers/shared/AuthControllers");
+const AuthControllers = require("@controllers/shared/AuthControllers");
+const { handleRefreshToken } = require("@controllers/shared/AuthControllers");
 const { verifyToken } = require("../../middlewares/auth.middleware");
 const route = express.Router();
 

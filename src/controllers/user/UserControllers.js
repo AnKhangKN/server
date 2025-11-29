@@ -1,4 +1,4 @@
-const UserServices = require("../../services/user/UserServices");
+const UserServices = require("@services/user/UserServices");
 const throwError = require("../../utils/throwError");
 
 const getFriendsSuggest = async (req, res, next) => {

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const throwError = require("../utils/throwError");
-const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = require("../config/env");
+const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = require("./env");
 
 const generateAccessToken = (payload) => {
   return jwt.sign(payload, JWT_ACCESS_SECRET, {

@@ -1,11 +1,10 @@
-const CommentServices = require("../../services/user/CommentServices");
+const CommentServices = require("@services/user/CommentServices");
 
-const addComment = async (req, res) => {
+const addComment = async (req, res, next) => {
   try {
-    const { post, content } = req.body;
-    const author = req.user.id;
+    const { post, content, parentComment } = req.body;
 
-    console.log(post);
+    const author = req.user.id;
 
     const medias = req.cloudinary?.commentMedias || [];
     const documents = req.cloudinary?.commentDocuments || [];
@@ -14,6 +13,7 @@ const addComment = async (req, res) => {
       post,
       author,
       content,
+      parentComment,
       medias,
       documents
     );
@@ -45,8 +45,20 @@ const deleteComment = async (req, res, next) => {
   }
 };
 
+const getCommentsReplyByCommentId = async (req, res, next) => {
+  try {
+    const { commentId } = req.params;
+
+    const result = await CommentServices.getCommentsReplyByCommentId(commentId);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   addComment,
   getCommentsByPostId,
   deleteComment,
+  getCommentsReplyByCommentId,
 };

@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "", // ảnh mặc định
     },
-    coverImage: {
+    userCover: {
       type: String,
       default: "", // ảnh mặc định
     },

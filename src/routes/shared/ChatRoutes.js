@@ -1,6 +1,6 @@
 const express = require("express");
 const { verifyToken } = require("../../middlewares/auth.middleware");
-const ChatControllers = require("../../controllers/shared/ChatControllers");
+const ChatControllers = require("@controllers/shared/ChatControllers");
 const {
   uploadFiles,
   upload,
@@ -26,5 +26,19 @@ route.post(
 route.get("/messages/:chatId", verifyToken, ChatControllers.getMessageHistory);
 
 route.get("/chats", verifyToken, ChatControllers.getAllChatList);
+
+route.post("/chatPassword", verifyToken, ChatControllers.createChatPassword);
+
+route.get(
+  "/chatPassword/:chatId",
+  verifyToken,
+  ChatControllers.getChatPassword
+);
+
+route.post(
+  "/verifyChatPassword",
+  verifyToken,
+  ChatControllers.verifyChatPassword
+);
 
 module.exports = route;

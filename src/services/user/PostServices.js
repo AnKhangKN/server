@@ -1,6 +1,6 @@
-const Heart = require("../../models/Heart");
-const Post = require("../../models/Post");
-const User = require("../../models/User");
+const Heart = require("@models/Heart");
+const Post = require("@models/Post");
+const User = require("@models/User");
 
 class PostServices {
   async createNewPost({
@@ -42,7 +42,7 @@ class PostServices {
     const posts = await Post.find()
       .populate({
         path: "author",
-        select: "firstName lastName userAvatar",
+        select: "firstName lastName userAvatar userName",
       })
       .populate({
         path: "group",

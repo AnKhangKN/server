@@ -1,5 +1,5 @@
-const User = require("../../models/User");
-const Post = require("../../models/Post");
+const User = require("@models/User");
+const Post = require("@models/Post");
 const throwError = require("../../utils/throwError");
 
 class UserServices {
@@ -178,6 +178,8 @@ class UserServices {
 
     return friends;
   }
+
+
 }
 
 module.exports = new UserServices();

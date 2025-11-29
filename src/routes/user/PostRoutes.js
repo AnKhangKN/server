@@ -1,7 +1,7 @@
 const express = require("express");
 const { verifyToken } = require("../../middlewares/auth.middleware");
 const { isUser } = require("../../middlewares/role.middleware");
-const PostControllers = require("../../controllers/user/PostControllers");
+const PostControllers = require("@controllers/user/PostControllers");
 const {
   uploadFiles,
   upload,

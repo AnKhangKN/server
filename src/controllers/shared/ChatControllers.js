@@ -1,4 +1,5 @@
-const ChatServices = require("../../services/shared/ChatServices");
+const ChatServices = require("@services/shared/ChatServices");
+const throwError = require("../../utils/throwError");
 
 const createChat = async (req, res, next) => {
   try {
@@ -74,10 +75,68 @@ const getAllChatList = async (req, res, next) => {
   }
 };
 
+const createChatPassword = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { chatId, newPassword, confirmPassword } = req.body;
+
+    console.log(chatId, newPassword, confirmPassword);
+
+    if (!chatId || !newPassword || !confirmPassword) {
+      throwError("Thiếu thông tin!", 400);
+    }
+
+    if (newPassword !== confirmPassword) {
+      throwError("Mật khẩu xác thực không trùng!", 401);
+    }
+
+    const result = await ChatServices.createChatPassword(
+      userId,
+      chatId,
+      newPassword
+    );
+
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getChatPassword = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { chatId } = req.params;
+
+    const result = await ChatServices.getChatPassword(userId, chatId);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const verifyChatPassword = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { chatId, password } = req.body;
+
+    const result = await ChatServices.verifyChatPassword(
+      userId,
+      chatId,
+      password
+    );
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createChat,
   createGroupChat,
   sendMessage,
   getMessageHistory,
   getAllChatList,
+  createChatPassword,
+  getChatPassword,
+  verifyChatPassword,
 };

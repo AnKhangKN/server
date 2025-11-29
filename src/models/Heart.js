@@ -12,7 +12,7 @@ const heartSchema = new mongoose.Schema(
 
     targetType: {
       type: String,
-      enum: ["Post", "Comment"],
+      enum: ["Post", "Comment", "Message"],
       required: true,
     },
   },

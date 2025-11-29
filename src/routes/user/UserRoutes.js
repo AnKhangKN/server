@@ -1,5 +1,5 @@
 const express = require("express");
-const UserControllers = require("../../controllers/user/UserControllers");
+const UserControllers = require("@controllers/user/UserControllers");
 const { verifyToken } = require("../../middlewares/auth.middleware");
 const { isUser } = require("../../middlewares/role.middleware");
 
@@ -33,5 +33,7 @@ route.get(
 );
 
 route.get("/friends", verifyToken, isUser, UserControllers.getFriends);
+
+
 
 module.exports = route;

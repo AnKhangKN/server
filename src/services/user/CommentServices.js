@@ -1,22 +1,42 @@
-const Comment = require("../../models/Comment");
-const Heart = require("../../models/Heart");
-const { throwError } = require("../../utils/throwError");
+const Comment = require("@models/Comment");
 
 class CommentServices {
-  async addComment(post, author, content, medias, documents) {
-    const newComment = await Comment.create({
-      post,
-      author,
-      content,
-      medias: medias || [],
-      documents: documents || [],
-    });
+  async addComment(post, author, content, parentComment, medias, documents) {
+    let newComment;
+
+    if (!parentComment) {
+      newComment = await Comment.create({
+        post,
+        author,
+        content,
+        medias: medias || [],
+        documents: documents || [],
+      });
+    } else {
+      newComment = await Comment.create({
+        post,
+        author,
+        content,
+        medias: medias || [],
+        documents: documents || [],
+        parentComment,
+      });
+
+      // Tăng repliesCount của comment cha
+      await Comment.findByIdAndUpdate(parentComment, {
+        $inc: { repliesCount: 1 },
+      });
+    }
 
     return newComment;
   }
 
   async getCommentsByPostId(postId) {
-    const comments = await Comment.find({ post: postId, isDeleted: false })
+    const comments = await Comment.find({
+      post: postId,
+      isDeleted: false,
+      parentComment: null,
+    })
       .populate("author", "userName userAvatar lastName firstName _id")
       .populate({
         path: "hearts",
@@ -41,6 +61,23 @@ class CommentServices {
       { new: true }
     );
     return deletedComment;
+  }
+
+  async getCommentsReplyByCommentId(commentId) {
+    const repliesComment = await Comment.find({
+      parentComment: commentId,
+      isDeleted: false,
+    })
+      .populate("author", "userName userAvatar lastName firstName _id")
+      .populate({
+        path: "hearts",
+        select: "author",
+      })
+      .populate("medias")
+      .populate("documents")
+      .sort({ createdAt: -1 });
+
+    return repliesComment;
   }
 }
 

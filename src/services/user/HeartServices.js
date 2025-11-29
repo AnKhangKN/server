@@ -1,7 +1,8 @@
-const Comment = require("../../models/Comment");
-const Heart = require("../../models/Heart");
-const Post = require("../../models/Post");
-const { throwError } = require("../../utils/throwError");
+const Comment = require("@models/Comment");
+const Heart = require("@models/Heart");
+const Post = require("@models/Post");
+const throwError = require("../../utils/throwError");
+const Message = require("@models/Message");
 
 class HeartServices {
   async heartTarget(targetId, targetType, userId) {
@@ -10,6 +11,7 @@ class HeartServices {
     // Xác định model theo targetType
     if (targetType === "Comment") Model = Comment;
     else if (targetType === "Post") Model = Post;
+    else if (targetType === "Message") Model = Message;
     else throwError("Invalid target type", 400);
 
     // Kiểm tra tồn tại

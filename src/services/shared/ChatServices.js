@@ -1,6 +1,8 @@
-const Chat = require("../../models/Chat");
+const Chat = require("@models/Chat");
+const ChatPassword = require("../../models/ChatPassword");
 const Message = require("../../models/Message");
 const bcrypt = require("bcryptjs");
+const throwError = require("../../utils/throwError");
 
 class ChatServices {
   async createChat(userId, senderId) {
@@ -73,6 +75,10 @@ class ChatServices {
 
     const messages = await Message.find({ chatId })
       .populate("senderId", "userName userAvatar lastName firstName")
+      .populate({
+        path: "hearts",
+        select: "author",
+      })
       .sort({ createdAt: 1 });
 
     return {
@@ -105,6 +111,64 @@ class ChatServices {
       message: "Lấy tất cả chat thành công!",
       data: allChats,
     };
+  }
+
+  async createChatPassword(userId, chatId, password) {
+    // kiểm tra xem user đã đặt mật khẩu cho chat này chưa?
+    const chatPassword = await ChatPassword.findOne({
+      userId,
+      chatId,
+    });
+
+    if (chatPassword) {
+      throwError("Mật khẩu đã tồn tại, hãy sử dụng mật khẩu hiện tại!", 401);
+    }
+
+    // hash mật khẩu
+    const passwordHash = bcrypt.hashSync(password, 10);
+
+    // tạo document mới
+    await ChatPassword.create({
+      userId,
+      chatId,
+      passwordHash,
+    });
+
+    return {
+      message: "Đã đặt mật khẩu cho đoạn chat!",
+    };
+  }
+
+  async getChatPassword(userId, chatId) {
+    const chatPassword = await ChatPassword.findOne({ userId, chatId });
+
+    if (!chatPassword) {
+      // Nếu không có mật khẩu -> trả về null hoặc cho phép truy cập
+      return { hasPassword: false };
+    }
+
+    return {
+      hasPassword: true,
+      message: "Hãy nhập mật khẩu",
+    };
+  }
+
+  async verifyChatPassword(userId, chatId, password) {
+    const chatPassword = await ChatPassword.findOne({ userId, chatId });
+
+    console.log(chatPassword);
+
+    if (!chatPassword) {
+      return { success: true, message: "Chat không có mật khẩu" };
+    }
+
+    const isValid = await bcrypt.compare(password, chatPassword.passwordHash);
+
+    if (!isValid) {
+      return { success: false, message: "Mật khẩu không đúng" };
+    }
+
+    return { success: true, message: "Xác thực thành công" };
   }
 }
 

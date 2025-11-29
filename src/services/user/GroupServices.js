@@ -1,4 +1,4 @@
-const Group = require("../../models/Group");
+const Group = require("@models/Group");
 const throwError = require("../../utils/throwError");
 
 class GroupServices {

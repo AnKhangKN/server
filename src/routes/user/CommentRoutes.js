@@ -1,5 +1,5 @@
 const express = require("express");
-const CommentControllers = require("../../controllers/user/CommentControllers");
+const CommentControllers = require("@controllers/user/CommentControllers");
 const { verifyToken } = require("../../middlewares/auth.middleware");
 const { isUser } = require("../../middlewares/role.middleware");
 const {
@@ -33,6 +33,13 @@ route.delete(
   verifyToken,
   isUser,
   CommentControllers.deleteComment
+);
+
+route.get(
+  "/repliesComment/:commentId",
+  verifyToken,
+  isUser,
+  CommentControllers.getCommentsReplyByCommentId
 );
 
 module.exports = route;

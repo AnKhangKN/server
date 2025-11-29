@@ -1,4 +1,4 @@
-const AuthServices = require("../../services/shared/AuthServices");
+const AuthServices = require("@services/shared/AuthServices");
 const jwtServices = require("../../config/jwt");
 const throwError = require("../../utils/throwError");
 
