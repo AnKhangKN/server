@@ -28,13 +28,18 @@ class CommentServices {
       });
     }
 
+    // Populate thông tin author (tên, avatar…)
+    newComment = await newComment.populate(
+      "author",
+      "firstName lastName userAvatar"
+    );
+
     return newComment;
   }
 
   async getCommentsByPostId(postId) {
     const comments = await Comment.find({
       post: postId,
-      isDeleted: false,
       parentComment: null,
     })
       .populate("author", "userName userAvatar lastName firstName _id")
@@ -66,7 +71,6 @@ class CommentServices {
   async getCommentsReplyByCommentId(commentId) {
     const repliesComment = await Comment.find({
       parentComment: commentId,
-      isDeleted: false,
     })
       .populate("author", "userName userAvatar lastName firstName _id")
       .populate({

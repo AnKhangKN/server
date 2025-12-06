@@ -39,7 +39,7 @@ class PostServices {
   }
 
   async getPosts() {
-    const posts = await Post.find()
+    const posts = await Post.find({ status: "active" })
       .populate({
         path: "author",
         select: "firstName lastName userAvatar userName",

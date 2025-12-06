@@ -12,7 +12,6 @@ const route = express.Router();
 route.post(
   "/posts",
   verifyToken,
-  isUser,
   upload.fields([
     { name: "mediaPosts", maxCount: 10 }, // tối đa 10 ảnh và video
     { name: "documentPosts", maxCount: 10 }, // tối đa 10 document
@@ -21,8 +20,8 @@ route.post(
   PostControllers.createNewPost
 );
 
-route.get("/posts", verifyToken, isUser, PostControllers.getPosts);
+route.get("/posts", verifyToken, PostControllers.getPosts);
 
-route.get("/posts/:postId", verifyToken, isUser, PostControllers.getPostById);
+route.get("/posts/:postId", verifyToken, PostControllers.getPostById);
 
 module.exports = route;

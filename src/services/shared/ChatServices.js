@@ -45,7 +45,15 @@ class ChatServices {
     };
   }
 
-  async sendMessage(chatId, senderId, text, medias, documents) {
+  async sendMessage(
+    chatId,
+    senderId,
+    text,
+    parentMessage,
+    parentText,
+    medias,
+    documents
+  ) {
     const chat = await Chat.findById(chatId);
     if (!chat) throwError("Chat không tồn tại");
 
@@ -53,6 +61,8 @@ class ChatServices {
       chatId,
       senderId,
       text,
+      parentMessage,
+      parentText,
       medias,
       documents,
     });
@@ -75,6 +85,7 @@ class ChatServices {
 
     const messages = await Message.find({ chatId })
       .populate("senderId", "userName userAvatar lastName firstName")
+      .populate("parentMessage", "text isDeleted isEdited")
       .populate({
         path: "hearts",
         select: "author",
@@ -86,6 +97,23 @@ class ChatServices {
       data: messages,
     };
   }
+
+  async deleteMessage(messageId) {
+    const message = await Message.findByIdAndUpdate(
+      messageId,
+      {
+        isDeleted: true,
+        text: "Tin nhắn đã bị xóa",
+        medias: [],
+        documents: [],
+      },
+      { new: true }
+    );
+
+    return message;
+  }
+
+  async editMessage() {}
 
   async getAllChatList(userId) {
     // Lấy tất cả chat mà user tham gia
@@ -155,8 +183,6 @@ class ChatServices {
 
   async verifyChatPassword(userId, chatId, password) {
     const chatPassword = await ChatPassword.findOne({ userId, chatId });
-
-    console.log(chatPassword);
 
     if (!chatPassword) {
       return { success: true, message: "Chat không có mật khẩu" };

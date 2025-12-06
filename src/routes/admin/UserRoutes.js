@@ -7,4 +7,6 @@ const route = express.Router();
 
 route.get("/users", verifyToken, isAdmin, UserControllers.getUsers);
 
+route.put("/users/:userId", verifyToken, isAdmin, UserControllers.updateRole);
+
 module.exports = route;

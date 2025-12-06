@@ -11,7 +11,6 @@ const {
 route.post(
   "/groups",
   verifyToken,
-  isUser,
   upload.fields([
     { name: "groupAvatar", maxCount: 1 },
     { name: "groupCoverImage", maxCount: 1 },
@@ -19,5 +18,9 @@ route.post(
   uploadFiles,
   GroupControllers.createGroup
 );
+
+route.get("/groups", verifyToken, GroupControllers.getGroupsJoin);
+
+route.get("/groups/:groupId", verifyToken, GroupControllers.getGroupDetail);
 
 module.exports = route;

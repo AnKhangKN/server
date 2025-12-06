@@ -5,22 +5,29 @@ const throwError = require("../../utils/throwError");
 class UserServices {
   async getFriendsSuggest(userId) {
     // 1️⃣ Lấy thông tin user hiện tại
-    const currentUser = await User.findById(userId).lean();
-    if (!currentUser) throwError("Không tìm thấy người dùng!", 400);
+    const user = await User.findById(userId).lean();
+    if (!user) throwError("Không tìm thấy người dùng!", 400);
 
     // 2️⃣ Lấy danh sách ID bạn bè bị ẩn/chặn
     const hiddenIds =
-      currentUser.friendsHidden?.map((f) => f.friendId.toString()) || [];
+      user.friendsHidden?.map((f) => f.friendId.toString()) || [];
 
-    // 3️⃣ Lấy danh sách user chưa bị ẩn/chặn, trừ chính mình
+    const now = new Date();
+
+    // 3️⃣ Lấy danh sách user chưa bị ẩn/chặn, trừ chính mình, trừ các user là admin
     const users = await User.find({
       _id: { $nin: [...hiddenIds, userId] },
+      isAdmin: false,
+      statusAccount: "active",
+      $or: [
+        { lockedTime: { $exists: false } }, // user chưa bị khóa
+        { lockedTime: { $lt: now } }, // user bị khóa nhưng đã hết hạn
+      ],
     }).lean();
 
     // 4️⃣ Lọc những user chưa được following
     const notFollowingUsers = users.filter(
-      (u) =>
-        !currentUser.following.some((id) => id.toString() === u._id.toString())
+      (u) => !user.following.some((id) => id.toString() === u._id.toString())
     );
 
     return {
@@ -178,8 +185,6 @@ class UserServices {
 
     return friends;
   }
-
-
 }
 
 module.exports = new UserServices();

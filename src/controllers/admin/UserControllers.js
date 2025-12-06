@@ -10,6 +10,20 @@ const getUsers = async (req, res, next) => {
   }
 };
 
+const updateRole = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    const result = await UserServices.updateRole(userId, role);
+
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getUsers,
+  updateRole,
 };

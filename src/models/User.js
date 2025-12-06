@@ -94,12 +94,17 @@ const userSchema = new mongoose.Schema(
     // Nếu bị admin khóa sẽ là locked và locked time (thời gian sẽ được mở khóa).
     statusAccount: {
       type: String,
-      enum: ["active", "inactive", "locked"],
+      enum: ["active", "inactive"],
       default: "active",
     },
 
     lockedTime: {
       type: Date,
+    },
+
+    // Số lần bị khóa
+    lockCount: {
+      type: Number,
     },
   },
   { timestamps: true }

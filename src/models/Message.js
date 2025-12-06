@@ -24,6 +24,17 @@ const messageSchema = new mongoose.Schema(
       required: false,
     },
 
+    parentMessage: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+      default: null,
+    },
+
+    parentText: {
+      type: String,
+      required: false,
+    },
+
     hearts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Heart" }],
 
     heartsCount: { type: Number, default: 0 },
@@ -33,6 +44,12 @@ const messageSchema = new mongoose.Schema(
     documents: [mediaSchema], // file tài liệu
 
     isRead: {
+      type: Boolean,
+      default: false,
+    },
+
+    isEdited: { type: Boolean, default: false },
+    isDeleted: {
       type: Boolean,
       default: false,
     },

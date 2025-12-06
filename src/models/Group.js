@@ -4,9 +4,9 @@ const groupSchema = new mongoose.Schema(
   {
     groupName: { type: String, required: true },
 
-    groupAvatar: { type: String, required: true },
+    groupAvatar: { type: String },
 
-    groupCoverImage: { type: String, default: "" },
+    groupCoverImage: { type: String },
 
     groupPrivacy: { type: String, enum: ["public", "approve"], required: true },
 
@@ -19,6 +19,12 @@ const groupSchema = new mongoose.Schema(
     joinRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
     introduction: { type: String, default: "" },
+
+    status: {
+      type: String,
+      enum: ["active", "inactive", "locked"],
+      default: "active",
+    },
   },
   { timestamps: true }
 );

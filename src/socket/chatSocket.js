@@ -1,3 +1,5 @@
+const { getMessageHistory } = require("@services/shared/ChatServices");
+
 module.exports = (io, socket) => {
   // Khi user join chat room
   socket.on("joinChat", (chatId) => {
@@ -9,5 +11,10 @@ module.exports = (io, socket) => {
   socket.on("sendMessage", (msg) => {
     // Gửi lại tin nhắn tới tất cả user trong room
     io.to(msg.chatId).emit("receiveMessage", msg);
+  });
+
+  socket.on("deleteMessage", (msg) => {
+    // Gửi lại tin nhắn tới tất cả user trong room
+    io.to(msg.chatId).emit("messageDeleted", msg._id);
   });
 };

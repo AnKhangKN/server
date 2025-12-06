@@ -26,9 +26,9 @@ const registerValidator = (req, res, next) => {
     }
 
     // --- 3️⃣ Kiểm tra độ dài mật khẩu ---
-    if (password.length < 6) {
-      throwError("Mật khẩu phải có ít nhất 6 ký tự!", 400);
-    }
+    // if (password.length < 6) {
+    //   throwError("Mật khẩu phải có ít nhất 6 ký tự!", 400);
+    // }
 
     // --- 4️⃣ Kiểm tra trùng khớp mật khẩu ---
     if (password !== confirmPassword) {

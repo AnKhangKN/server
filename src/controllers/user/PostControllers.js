@@ -30,12 +30,6 @@ const createNewPost = async (req, res, next) => {
 
 const getPosts = async (req, res, next) => {
   try {
-    const user = req.user.id;
-
-    if (!user) {
-      throwError("Người dùng không tồn tại!", 400);
-    }
-
     const result = await PostServices.getPosts();
     res.status(200).json(result);
   } catch (error) {

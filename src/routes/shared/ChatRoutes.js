@@ -29,6 +29,14 @@ route.get("/chats", verifyToken, ChatControllers.getAllChatList);
 
 route.post("/chatPassword", verifyToken, ChatControllers.createChatPassword);
 
+route.delete(
+  "/messages/:messageId",
+  verifyToken,
+  ChatControllers.deleteMessage
+);
+
+route.put("/messages/:messageId", verifyToken, ChatControllers.editMessage);
+
 route.get(
   "/chatPassword/:chatId",
   verifyToken,
