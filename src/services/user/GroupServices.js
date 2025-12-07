@@ -1,5 +1,6 @@
 const Group = require("@models/Group");
 const throwError = require("../../utils/throwError");
+const Post = require("@models/Post");
 
 class GroupServices {
   async createGroup({
@@ -48,12 +49,40 @@ class GroupServices {
   async getGroupsJoin(userId) {
     if (!userId) throwError("Không xác định được người dùng!", 400);
 
+    // 1️⃣ Lấy tất cả các group mà user đang tham gia và đang active
     const groups = await Group.find({
-      groupMember: userId, // user có trong groupMember
-      status: "active", // nhớ dùng string, không phải biến
-    });
+      groupMember: userId,
+      status: "active",
+    }).sort({ createdAt: -1 });
 
-    return groups;
+    const groupIds = groups.map((g) => g._id);
+
+    // Nếu user không tham gia group nào thì trả về mảng rỗng
+    if (groupIds.length === 0) return [];
+
+    // 2️⃣ Lấy tất cả bài viết của các nhóm này
+    const posts = await Post.find({
+      group: { $in: groupIds },
+    })
+      .sort({ createdAt: -1 }) // mới nhất lên đầu
+      .populate({
+        path: "author",
+        select: "firstName lastName userAvatar userName",
+      })
+      .populate({
+        path: "group",
+        select: "groupName groupAvatar",
+      })
+      .populate({
+        path: "hearts",
+        select: "author",
+      });
+
+    return {
+      message: "Thanh cong",
+      groups,
+      posts,
+    };
   }
 
   async getGroupDetail(groupId) {
@@ -62,7 +91,43 @@ class GroupServices {
       status: "active",
     });
 
-    return group;
+    const posts = await Post.find({ group: groupId })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "author",
+        select: "firstName lastName userAvatar userName",
+      })
+      .populate({
+        path: "group",
+        select: "groupName groupAvatar",
+      })
+      .populate({
+        path: "hearts",
+        select: "author",
+      });
+
+    return {
+      message: "Thanh cong",
+      data: {
+        group,
+        posts,
+      },
+    };
+  }
+
+  async getGroupsNotJoined(userId) {
+    if (!userId) throwError("Không xác định được người dùng!", 400);
+    console.log(userId);
+
+    const groups = await Group.find({
+      groupMember: { $nin: [userId] }, // lọc những group mà userId không có trong groupMember
+      status: "active", // nếu muốn chỉ lấy group đang active
+    }).sort({ createdAt: -1 }); // mới nhất lên đầu
+
+    return {
+      message: "Thanh cong",
+      data: groups,
+    };
   }
 }
 

@@ -9,6 +9,8 @@ const HeartRoutesUser = require("./user/HeartRoutes");
 const ReportRoutesAdmin = require("./admin/ReportRoutes");
 const ReportRoutes = require("./shared/ReportRoutes");
 const GroupUserRoutes = require("./user/GroupRoutes");
+const SharedRoutesAdmin = require("./admin/SharedRoutes");
+const DepartmentRoutesAdmin = require("./admin/DepartmentRoutes");
 
 const routes = (app) => {
   // shared
@@ -27,6 +29,8 @@ const routes = (app) => {
   // admin
   app.use("/api/admin", UserRoutesAdmin);
   app.use("/api/admin", ReportRoutesAdmin);
+  app.use("/api/admin", SharedRoutesAdmin);
+  app.use("/api/admin", DepartmentRoutesAdmin);
 };
 
 module.exports = routes;

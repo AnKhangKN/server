@@ -8,7 +8,7 @@ class ReportServices {
   async getReports(reportType) {
     const reports = await Report.find({ reportType: reportType })
       .populate("reportUser", "email")
-      .populate("reportModels", "email lockCount lockedTime")
+      .populate("reportModels", "_id email lockCount lockedTime")
       .populate("handledBy", "email");
     return { data: reports };
   }
@@ -82,9 +82,7 @@ class ReportServices {
     };
   }
 
-  async removeReport(reportId, reportModels) {
-     
-  }
+  async removeReport(reportId, reportModels) {}
 }
 
 module.exports = new ReportServices();

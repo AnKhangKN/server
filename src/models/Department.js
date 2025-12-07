@@ -4,7 +4,7 @@ const departmentSchema = new mongoose.Schema(
   {
     departmentName: { type: String, require: true },
 
-    departmentAvatar: { type: String },
+    departmentCode: { type: String, require: true },
   },
   {
     timestamps: true,

@@ -49,8 +49,21 @@ const getGroupDetail = async (req, res, next) => {
   }
 };
 
+const getGroupsNotJoined = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await GroupServices.getGroupsNotJoined(userId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createGroup,
   getGroupsJoin,
   getGroupDetail,
+  getGroupsNotJoined,
 };

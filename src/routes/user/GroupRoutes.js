@@ -21,6 +21,8 @@ route.post(
 
 route.get("/groups", verifyToken, GroupControllers.getGroupsJoin);
 
+route.get("/groups/notJoin", verifyToken, GroupControllers.getGroupsNotJoined);
+
 route.get("/groups/:groupId", verifyToken, GroupControllers.getGroupDetail);
 
 module.exports = route;
