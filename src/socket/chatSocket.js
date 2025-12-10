@@ -1,5 +1,3 @@
-const { getMessageHistory } = require("@services/shared/ChatServices");
-
 module.exports = (io, socket) => {
   // Khi user join chat room
   socket.on("joinChat", (chatId) => {

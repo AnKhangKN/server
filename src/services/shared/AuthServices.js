@@ -91,7 +91,7 @@ class AuthServices {
     const payload = {
       id: user._id,
       isAdmin: user.isAdmin,
-      isSeller: user.isSeller,
+      isTeacher: user.isTeacher,
     };
 
     const accessToken = await generateAccessToken(payload);

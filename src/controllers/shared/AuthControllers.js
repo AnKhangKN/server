@@ -28,7 +28,7 @@ const loginController = async (req, res, next) => {
     if (platform === "web") {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: false, // Đổi thành true khi deploy với HTTPS
+        secure: true, // Đổi thành true khi deploy với HTTPS
         sameSite: "strict",
         maxAge: 365 * 24 * 60 * 60 * 1000,
         path: "/",
