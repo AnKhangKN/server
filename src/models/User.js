@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     },
 
     studentId: { type: String, unique: true },
-    courses: { type: Number, min: 1 }, // Ví dụ: khóa 47, 48,...
+    courses: { type: String }, // Ví dụ: khóa 47, 48,...
     userAvatar: {
       type: String,
       default: "", // ảnh mặc định
@@ -35,13 +35,7 @@ const userSchema = new mongoose.Schema(
     orderConnect: [
       {
         linkName: { type: String },
-        linkConnect: {
-          type: String,
-          validate: {
-            validator: (v) => !v || /^https?:\/\/.+/.test(v),
-            message: "Link không hợp lệ! Phải bắt đầu bằng http hoặc https",
-          },
-        },
+        linkConnect: { type: String },
       },
     ],
 

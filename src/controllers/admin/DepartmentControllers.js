@@ -25,7 +25,24 @@ const getDepartments = async (req, res, next) => {
   }
 };
 
+const updateDepartment = async (req, res, next) => {
+  try {
+    const { departmentId, departmentName, departmentCode } = req.body;
+
+    const result = await DepartmentServices.updateDepartment(
+      departmentId,
+      departmentName,
+      departmentCode
+    );
+
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createDepartment,
   getDepartments,
+  updateDepartment,
 };

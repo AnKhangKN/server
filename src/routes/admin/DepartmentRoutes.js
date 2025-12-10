@@ -12,11 +12,13 @@ route.post(
   DepartmentControllers.createDepartment
 );
 
-route.get(
+route.get("/departments", verifyToken, DepartmentControllers.getDepartments);
+
+route.put(
   "/departments",
   verifyToken,
   isAdmin,
-  DepartmentControllers.getDepartments
+  DepartmentControllers.updateDepartment
 );
 
 module.exports = route;

@@ -5,21 +5,21 @@ const reportSchema = new mongoose.Schema(
     // Loại đối tượng bị report: Post, User, Comment, Group
     reportType: {
       type: String,
-      enum: ["Post", "User", "Group"],
-      required: true,
+      enum: ["Post", "User", "Group", "System"],
     },
-    // Tham chiếu đến đối tượng bị report (Post/User/Comment/Group)
+    // Tham chiếu đến đối tượng bị report (Post/User/Group)
     reportModels: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       refPath: "reportType",
     },
 
+    // người gửi
     reportUser: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+
     // admin nào xử lý
     handledBy: {
       type: mongoose.Schema.Types.ObjectId,

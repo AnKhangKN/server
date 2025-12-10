@@ -101,6 +101,66 @@ const getFriends = async (req, res, next) => {
   }
 };
 
+const updateInfoUser = async (req, res, next) => {
+  try {
+    const {
+      lastName,
+      firstName,
+      userName,
+      studentId,
+      courses,
+      major,
+      gender,
+      bio,
+    } = req.body;
+
+    console.log(req.body);
+
+    const userId = req.user.id;
+
+    const result = await UserServices.updateInfoUser(
+      userId,
+      lastName,
+      firstName,
+      userName,
+      studentId,
+      courses,
+      major,
+      gender,
+      bio
+    );
+
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateOrderConnect = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await UserServices.updateOrderConnect(userId, req.body);
+
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteUserHidden = async (req, res, next) => {
+  try {
+    const { friendId } = req.params;
+
+    const userId = req.user.id;
+
+    const result = await UserServices.deleteUserHidden(userId, friendId);
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getFriendsSuggest,
   followFriend,
@@ -109,4 +169,7 @@ module.exports = {
   getFollowing,
   getFollower,
   getFriends,
+  updateInfoUser,
+  updateOrderConnect,
+  deleteUserHidden
 };

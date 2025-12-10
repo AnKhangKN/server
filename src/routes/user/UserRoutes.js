@@ -34,6 +34,14 @@ route.get(
 
 route.get("/friends", verifyToken, isUser, UserControllers.getFriends);
 
+route.post("/info_user", verifyToken, UserControllers.updateInfoUser);
 
+route.put("/order-connect", verifyToken, UserControllers.updateOrderConnect);
+
+route.delete(
+  "/friendHidden/:friendId",
+  verifyToken,
+  UserControllers.deleteUserHidden
+);
 
 module.exports = route;

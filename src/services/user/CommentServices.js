@@ -1,34 +1,31 @@
 const Comment = require("@models/Comment");
+const Post = require("@models/Post");
 
 class CommentServices {
   async addComment(post, author, content, parentComment, medias, documents) {
-    let newComment;
+    // 1️⃣ Tạo comment mới
+    let newComment = await Comment.create({
+      post,
+      author,
+      content,
+      medias: medias || [],
+      documents: documents || [],
+      parentComment: parentComment || null,
+    });
 
-    if (!parentComment) {
-      newComment = await Comment.create({
-        post,
-        author,
-        content,
-        medias: medias || [],
-        documents: documents || [],
-      });
-    } else {
-      newComment = await Comment.create({
-        post,
-        author,
-        content,
-        medias: medias || [],
-        documents: documents || [],
-        parentComment,
-      });
+    // 2️⃣ Tăng tổng commentsCount của Post (dù là comment thường hay reply)
+    await Post.findByIdAndUpdate(post, {
+      $inc: { commentsCount: 1 },
+    });
 
-      // Tăng repliesCount của comment cha
+    // 3️⃣ Nếu là reply → tăng repliesCount của comment cha
+    if (parentComment) {
       await Comment.findByIdAndUpdate(parentComment, {
         $inc: { repliesCount: 1 },
       });
     }
 
-    // Populate thông tin author (tên, avatar…)
+    // 4️⃣ Populate author
     newComment = await newComment.populate(
       "author",
       "firstName lastName userAvatar"

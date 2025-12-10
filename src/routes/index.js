@@ -11,6 +11,9 @@ const ReportRoutes = require("./shared/ReportRoutes");
 const GroupUserRoutes = require("./user/GroupRoutes");
 const SharedRoutesAdmin = require("./admin/SharedRoutes");
 const DepartmentRoutesAdmin = require("./admin/DepartmentRoutes");
+const ShareRoutesUser = require("./user/ShareRoutes");
+const SearchRoutes = require("./shared/SearchRoutes");
+const NotificationRoutes = require("./shared/NotificationRoutes");
 
 const routes = (app) => {
   // shared
@@ -18,6 +21,8 @@ const routes = (app) => {
   app.use("/api/shared", UserRoutes);
   app.use("/api/shared", ChatRoutes);
   app.use("/api/shared", ReportRoutes);
+  app.use("/api/shared", SearchRoutes);
+  app.use("/api/shared", NotificationRoutes);
 
   // user
   app.use("/api/user", PostRoutesUser);
@@ -25,6 +30,7 @@ const routes = (app) => {
   app.use("/api/user", CommentRoutesUser);
   app.use("/api/user", HeartRoutesUser);
   app.use("/api/user", GroupUserRoutes);
+  app.use("/api/user", ShareRoutesUser);
 
   // admin
   app.use("/api/admin", UserRoutesAdmin);

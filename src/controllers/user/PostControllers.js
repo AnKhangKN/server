@@ -3,14 +3,23 @@ const throwError = require("../../utils/throwError");
 
 const createNewPost = async (req, res, next) => {
   try {
-    const { group, content, bgContent, hashtag, userTag, emotion, privacy } =
-      req.body;
+    const {
+      group,
+      department,
+      content,
+      bgContent,
+      hashtag,
+      userTag,
+      emotion,
+      privacy,
+    } = req.body;
 
     const medias = req.cloudinary?.postMedias || [];
     const documents = req.cloudinary?.postDocuments || [];
 
     const post = await PostServices.createNewPost({
       group,
+      department,
       author: req.user._id || req.user.id,
       content,
       bgContent,
@@ -30,7 +39,9 @@ const createNewPost = async (req, res, next) => {
 
 const getPosts = async (req, res, next) => {
   try {
-    const result = await PostServices.getPosts();
+    const userId = req.user.id;
+
+    const result = await PostServices.getPosts(userId);
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -53,8 +64,31 @@ const getPostById = async (req, res, next) => {
   }
 };
 
+const getPostsDepartment = async (req, res, next) => {
+  try {
+    const result = await PostServices.getPostsDepartment();
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getPostsDepartmentDetail = async (req, res, next) => {
+  try {
+    const { departmentId } = req.params;
+
+    const result = await PostServices.getPostsDepartmentDetail(departmentId);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createNewPost,
   getPosts,
   getPostById,
+  getPostsDepartment,
+  getPostsDepartmentDetail,
 };

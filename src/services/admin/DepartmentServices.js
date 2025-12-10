@@ -21,6 +21,29 @@ class DepartmentServices {
       data: department,
     };
   }
+
+  async updateDepartment(departmentId, departmentName, departmentCode) {
+    const department = await Department.findByIdAndUpdate(
+      departmentId,
+      {
+        departmentName,
+        departmentCode,
+      },
+      { new: true } // trả về dữ liệu mới nhất
+    );
+
+    if (!department) {
+      return {
+        message: "Phòng ban không tồn tại",
+        data: null,
+      };
+    }
+
+    return {
+      message: "Cập nhật thành công",
+      data: department,
+    };
+  }
 }
 
 module.exports = new DepartmentServices();

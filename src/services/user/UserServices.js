@@ -1,6 +1,7 @@
 const User = require("@models/User");
 const Post = require("@models/Post");
 const throwError = require("../../utils/throwError");
+const Share = require("@models/Share");
 
 class UserServices {
   async getFriendsSuggest(userId) {
@@ -13,6 +14,8 @@ class UserServices {
       user.friendsHidden?.map((f) => f.friendId.toString()) || [];
 
     const now = new Date();
+
+    console.log("User following:", user.following);
 
     // 3️⃣ Lấy danh sách user chưa bị ẩn/chặn, trừ chính mình, trừ các user là admin
     const users = await User.find({
@@ -105,13 +108,13 @@ class UserServices {
       message: `Người dùng ${friendId} đã bị ${
         type === "block" ? "chặn" : "ẩn"
       }!`,
-      data: user.friendsHidden,
+      data: user,
     };
   }
 
   async getProfile(userName) {
     // 1. Tìm user
-    const user = await User.findOne({ userName: userName }).select("-password"); // loại bỏ password nếu có
+    const user = await User.findOne({ userName }).select("-password");
     if (!user) {
       throwError("Không tìm thấy người dùng!", 400);
     }
@@ -130,15 +133,34 @@ class UserServices {
         path: "hearts",
         select: "author",
       })
-      .sort({ createdAt: -1 }) // Mới nhất
+      .sort({ createdAt: -1 })
       .lean();
 
-    // 3. Trả về kết quả
+    // 3. Lấy tất cả bài share của user
+    const shares = await Share.find({ author: user._id })
+      .populate({
+        path: "post",
+        populate: [
+          { path: "author", select: "firstName lastName userAvatar" },
+          { path: "group", select: "groupName groupAvatar" },
+          { path: "hearts", select: "author" },
+        ],
+      })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // 4. Gộp posts và shares để trả về
+    const combinedPosts = [
+      ...posts.map((p) => ({ type: "post", data: p })),
+      ...shares.map((s) => ({ type: "share", data: s })),
+    ].sort((a, b) => new Date(b.data.createdAt) - new Date(a.data.createdAt));
+
+    // 5. Trả về kết quả
     return {
       message: "Lấy thông tin user và bài viết thành công",
       data: {
         user,
-        posts,
+        posts: combinedPosts,
       },
     };
   }
@@ -184,6 +206,123 @@ class UserServices {
     );
 
     return friends;
+  }
+
+  async updateInfoUser(
+    userId,
+    lastName,
+    firstName,
+    userName,
+    studentId,
+    courses,
+    major,
+    gender,
+    bio
+  ) {
+    // --------------------------
+    // 1. CHECK UNIQUE USERNAME
+    // --------------------------
+    if (userName !== undefined) {
+      const existedUserName = await User.findOne({
+        userName,
+        _id: { $ne: userId }, // không phải chính user đó
+      });
+
+      if (existedUserName) {
+        return {
+          status: 409,
+          message: "Tên người dùng đã tồn tại",
+          data: null,
+        };
+      }
+    }
+
+    // --------------------------
+    // 2. CHECK UNIQUE STUDENT ID
+    // --------------------------
+    if (studentId !== undefined) {
+      const existedStudentId = await User.findOne({
+        studentId,
+        _id: { $ne: userId },
+      });
+
+      if (existedStudentId) {
+        return {
+          status: 409,
+          message: "Mã số sinh viên đã tồn tại",
+          data: null,
+        };
+      }
+    }
+
+    // --------------------------
+    // 3. UPDATE INFO
+    // --------------------------
+    const updates = {};
+
+    if (lastName !== undefined) updates.lastName = lastName;
+    if (firstName !== undefined) updates.firstName = firstName;
+    if (userName !== undefined) updates.userName = userName;
+    if (studentId !== undefined) updates.studentId = studentId;
+    if (courses !== undefined) updates.courses = courses;
+    if (major !== undefined) updates.major = major;
+    if (gender !== undefined) updates.gender = gender;
+    if (bio !== undefined) updates.bio = bio;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: updates },
+      { new: true, upsert: false }
+    );
+
+    if (!user) {
+      return {
+        status: 404,
+        message: "User không tồn tại",
+        data: null,
+      };
+    }
+
+    return {
+      status: 200,
+      message: "Cập nhật thông tin thành công",
+      data: user,
+    };
+  }
+
+  async updateOrderConnect(userId, orderConnect) {
+    console.log(orderConnect);
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { orderConnect },
+      { new: true }
+    );
+
+    return {
+      message: "Cập nhật thành công!",
+      data: user,
+    };
+  }
+
+  async deleteUserHidden(userId, friendId) {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: {
+          friendsHidden: { friendId: friendId },
+        },
+      },
+      { new: true }
+    ).populate({
+      path: "friendsHidden.friendId",
+      select: "firstName lastName userAvatar userName",
+    });
+
+    return {
+      message: "Xóa người dùng khỏi danh sách thành công!",
+      data: user,
+    };
   }
 }
 

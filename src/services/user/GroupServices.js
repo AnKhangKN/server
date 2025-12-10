@@ -49,49 +49,30 @@ class GroupServices {
   async getGroupsJoin(userId) {
     if (!userId) throwError("Không xác định được người dùng!", 400);
 
-    // 1️⃣ Lấy tất cả các group mà user đang tham gia và đang active
+    // 1️⃣ Lấy danh sách group user đang tham gia (active)
     const groups = await Group.find({
       groupMember: userId,
       status: "active",
-    }).sort({ createdAt: -1 });
+    })
+      .sort({ createdAt: -1 })
+      .lean();
 
     const groupIds = groups.map((g) => g._id);
 
-    // Nếu user không tham gia group nào thì trả về mảng rỗng
-    if (groupIds.length === 0) return [];
+    // Nếu không tham gia group nào ⇒ trả về rỗng
+    if (groupIds.length === 0) {
+      return {
+        message: "Thành công",
+        groups: [],
+        posts: [],
+      };
+    }
 
-    // 2️⃣ Lấy tất cả bài viết của các nhóm này
+    // 2️⃣ Lấy bài viết của các group này (KHÔNG lấy bài share)
     const posts = await Post.find({
       group: { $in: groupIds },
+      status: "active", // thêm check status nếu có
     })
-      .sort({ createdAt: -1 }) // mới nhất lên đầu
-      .populate({
-        path: "author",
-        select: "firstName lastName userAvatar userName",
-      })
-      .populate({
-        path: "group",
-        select: "groupName groupAvatar",
-      })
-      .populate({
-        path: "hearts",
-        select: "author",
-      });
-
-    return {
-      message: "Thanh cong",
-      groups,
-      posts,
-    };
-  }
-
-  async getGroupDetail(groupId) {
-    const group = await Group.findOne({
-      _id: groupId,
-      status: "active",
-    });
-
-    const posts = await Post.find({ group: groupId })
       .sort({ createdAt: -1 })
       .populate({
         path: "author",
@@ -104,13 +85,59 @@ class GroupServices {
       .populate({
         path: "hearts",
         select: "author",
-      });
+      })
+      .lean();
 
     return {
-      message: "Thanh cong",
+      message: "Thành công",
+      groups,
+      posts: posts.map((p) => ({
+        type: "post", // chuẩn hoá giống feed (không ảnh hưởng frontend)
+        data: p,
+      })),
+    };
+  }
+
+  async getGroupDetail(groupId) {
+    // 1️⃣ Kiểm tra group hợp lệ
+    const group = await Group.findOne({
+      _id: groupId,
+      status: "active",
+    }).lean();
+
+    if (!group) throwError("Nhóm không tồn tại hoặc đã bị khóa!", 404);
+
+    // 2️⃣ Lấy bài viết (không bao gồm share)
+    const posts = await Post.find({
+      group: groupId,
+      status: "active",
+    })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "author",
+        select: "firstName lastName userAvatar userName",
+      })
+      .populate({
+        path: "group",
+        select: "groupName groupAvatar",
+      })
+      .populate({
+        path: "hearts",
+        select: "author",
+      })
+      .lean();
+
+    // 🔥 Chuẩn hoá output cho frontend
+    const formattedPosts = posts.map((post) => ({
+      type: "post",
+      data: post,
+    }));
+
+    return {
+      message: "Thành công",
       data: {
         group,
-        posts,
+        posts: formattedPosts,
       },
     };
   }

@@ -9,7 +9,8 @@ class ReportServices {
     const reports = await Report.find({ reportType: reportType })
       .populate("reportUser", "email")
       .populate("reportModels", "_id email lockCount lockedTime")
-      .populate("handledBy", "email");
+      .populate("handledBy", "email")
+      .sort({ createdAt: -1 });
     return { data: reports };
   }
 

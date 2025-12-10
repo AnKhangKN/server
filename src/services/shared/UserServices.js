@@ -3,7 +3,13 @@ const throwError = require("../../utils/throwError");
 
 class UserServices {
   async getDetailUser(userId) {
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId)
+      .select("-password")
+      .populate({
+        path: "friendsHidden.friendId",
+        select: "firstName lastName userAvatar userName",
+      })
+      .lean();
 
     if (!user) throwError("Người dùng không tồn tại!", 401);
 

@@ -22,6 +22,18 @@ route.post(
 
 route.get("/posts", verifyToken, PostControllers.getPosts);
 
+route.get(
+  "/posts/departments",
+  verifyToken,
+  PostControllers.getPostsDepartment
+);
+
 route.get("/posts/:postId", verifyToken, PostControllers.getPostById);
+
+route.get(
+  "/posts/departments/:departmentId",
+  verifyToken,
+  PostControllers.getPostsDepartmentDetail
+);
 
 module.exports = route;
